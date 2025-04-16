@@ -8,22 +8,24 @@
     --blue: #1fa0cc; 
     --white: #eeeeee;
 
-    --background: #fffffe;
+    --background: var(--black);
     --headline: #094067;
     --paragraphe: #5f6c7b;
     --button: #3da9fc;
     --highlight: #3da9fc;
+    --text: var(--white);
+    --accent: var(--blue);
 
 }
 
 * {
-    /* background-color: var(--background); */
-    color: var(--white);
+    color: var(--text);
     margin: 0; 
     padding: 0;
     box-sizing: border-box;
     font-family: "Dancing Script", cursive;
 }
+
 
 a{
     font-size: 20px;
@@ -36,6 +38,7 @@ a{
 
 .navigation a.active{
     text-decoration: underline;
+    color: var(--accent);
 }
 
 .site-header{
@@ -68,36 +71,57 @@ a{
 }
 
 .main-list li a:hover:not(.no-hover){
-   font-size: 1.8em;
-   color: var(--blue)
+    font-size: 1.8em;
+    color: var(--accent);
 }
 
 li{
     height: 31px;
 }
 button{
-    background-color: rgb(0, 0, 0, 0.0);
+    background-color: transparent;
+    color: var(--text);
+    border: 2px solid var(--accent);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight:700;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(31, 160, 204, 0.1);
     cursor: pointer;
-    padding: 5px 10px;
-    border: 1px solid;
-    transition: all 0.3s;
-    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 button:hover{
-    background-color: rgba(0, 146, 204, 0.8);  
+    background-color: var(--accent);
+    color: #000;
+    box-shadow: 0 4px 12px rgba(31, 160, 204, 0.3);
+    transform: translateY(-2px);
+}
+.but1{
+    background-color: transparent;
+    color: var(--text);
+    border: 2px solid var(--accent);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(31, 160, 204, 0.1);
 }
 
+.but1:hover{
+    background-color: var(--accent);
+    color: #000;
+    box-shadow: 0 4px 12px rgba(31, 160, 204, 0.3);
+    transform: translateY(-2px);
+}
 .contact{
     display: inherit;
     margin: 0px;
+}
 
-}
-.contact > button{
-    margin: 0px;
-    padding: 5px 10px;
-    height: auto;
-}
 
 /* body */
 
@@ -149,20 +173,6 @@ h1{
 }
 .intro1, .intro2{
     opacity: 0;
-}
-.but1{
-    margin: 20px auto;
-    padding: 10px 50px;
-    font-size: 1.2em;
-    border-radius: 0px;
-    transition: all 2s;
-    
-}
-
-.but1:hover{
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-   
 }
 
 
@@ -288,7 +298,8 @@ h1{
     width: 100%;
     text-align: center;
     font-size: 1.5em;
-    background-image: linear-gradient(rgb(0, 0, 0, 0.2), rgba(0, 0, 0, 00.8));
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
+    color: var(--text);
     padding: 10px 0px;
     opacity: 0;
     transition: opacity 0.8s ease;
