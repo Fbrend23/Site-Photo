@@ -111,7 +111,7 @@ body{
 .content{
     margin: 0;
     padding: 0;
-    background-image: url("images/DSC01060.jpg");
+    background-image: url("../img/gallerie/DSC01060.jpg");
     background-position: center;
     background-size: cover;
     background-attachment: fixed;
