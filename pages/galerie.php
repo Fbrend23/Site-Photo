@@ -1,3 +1,13 @@
+<?php
+$metaPath = __DIR__ . '/../src/php/metadonnees.json';
+$imgDir = '/src/img/galerie/';
+$photos = [];
+
+if (file_exists($metaPath)) {
+    $photos = json_decode(file_get_contents($metaPath), true) ?? [];
+}
+?>
+
 <section>
     <div id="category">
         <button class="btn selected" data-filter="all">Tous</button>
@@ -9,34 +19,24 @@
     </div>
 
     <div class="portfolio">
-        <?php
-        $metaPath = __DIR__ . '/../src/php/metadonnees.json';
-        $imgDir = '../src/img/galerie/';
-
-        if (file_exists($metaPath)) {
-            $photos = json_decode(file_get_contents($metaPath), true);
-
-            foreach ($photos as $photo) {
-                $src = $imgDir . $photo['filename'];
-                $cat = htmlspecialchars($photo['category']);
-                $desc = htmlspecialchars($photo['description']);
-
-                echo "<div class='container-img item $cat'>";
-                echo "<img src='$src' alt='$desc'>";
-                echo "<div class='description'>$desc</div>";
-                echo "</div>";
-            }
-        } else {
-            echo "<p>📂 Aucun fichier de métadonnées trouvé.</p>";
-        }
-        ?>
-    </div>
-
-    <div class="modal" id="myModal">
-        <span class="close">&times;</span>
-        <span class="previous">&#9665</span>
-        <span class="next">&#9655</span>
-        <img class="modal-content" id="modalImage">
+        <?php foreach ($photos as $photo): ?>
+            <div class="container-img item <?= htmlspecialchars($photo['category']) ?>">
+                <picture>
+                    <source srcset="<?= $imgDir . pathinfo($photo['filename'], PATHINFO_FILENAME) ?>.webp" type="image/webp">
+                    <img src="<?= $imgDir . $photo['filename'] ?>" loading="lazy" alt="<?= htmlspecialchars($photo['description']) ?>">
+                </picture>
+                <div class="description"><?= htmlspecialchars($photo['description']) ?></div>
+            </div>
+        <?php endforeach; ?>
     </div>
 </section>
+<!-- MODAL GALLERY -->
+<div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <div class="caption"></div>
+    <a class="previous">&#10094;</a>
+    <a class="next">&#10095;</a>
+</div>
+
 <script src="/src/js/galerie.js"></script>

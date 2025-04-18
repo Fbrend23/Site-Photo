@@ -5,3 +5,5 @@ node_modules
 *.lock
 admin/auth.php
 *.jpg
+admin/convert-to-webp.php
+*.webp

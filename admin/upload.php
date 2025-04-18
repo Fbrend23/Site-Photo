@@ -1,8 +1,8 @@
 <?php
 require_once 'auth.php';
 
-$uploadDir = __DIR__ . '/../src/img/galerie/';
-$metaPath = __DIR__ . '/../src/php/metadonnees.json';
+$metaPath = __DIR__ . '/metadonnees.json';
+$uploadDir = '../src/img/galerie/';
 $photos = [];
 
 if (file_exists($metaPath)) {
@@ -10,39 +10,43 @@ if (file_exists($metaPath)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
+    $description = trim($_POST['description']);
+    $category = trim($_POST['category']);
     $file = $_FILES['image'];
-    $originalName = basename($file['name']);
-    $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = 'img_' . uniqid('', true) . '.' . $extension;
+    $destination = $uploadDir . $filename;
 
-    if (!in_array($ext, $allowed)) {
-        die("❌ Format de fichier non autorisé.");
-    }
+    if (move_uploaded_file($file['tmp_name'], $destination)) {
 
-    // Récupération du nom personnalisé s'il existe
-    $nomFichier = isset($_POST['nom']) && trim($_POST['nom']) !== ''
-        ? preg_replace('/[^a-zA-Z0-9_-]/', '_', pathinfo($_POST['nom'], PATHINFO_FILENAME)) . '.' . $ext
-        : 'img_' . uniqid('', true) . '.' . $ext;
+        // Convertir l'image en WebP
+        $webpPath = $uploadDir . pathinfo($filename, PATHINFO_FILENAME) . '.webp';
+        $image = null;
+        switch (strtolower($extension)) {
+            case 'jpg':
+            case 'jpeg':
+                $image = imagecreatefromjpeg($destination);
+                break;
+            case 'png':
+                $image = imagecreatefrompng($destination);
+                break;
+        }
 
-    $targetPath = $uploadDir . $nomFichier;
+        if ($image) {
+            imagewebp($image, $webpPath, 80);
+            imagedestroy($image);
+        }
 
-    if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-        // Nettoyage des champs texte
-        $description = isset($_POST['description']) ? trim($_POST['description']) : '';
-        $categorie = isset($_POST['category']) ? trim($_POST['category']) : 'uncategorized';
-
-        // Ajout à la galerie
         $photos[] = [
-            'filename' => $nomFichier,
-            'description' => htmlspecialchars($description),
-            'category' => htmlspecialchars($categorie)
+            'filename' => $filename,
+            'description' => $description,
+            'category' => $category
         ];
-
         file_put_contents($metaPath, json_encode($photos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        header("Location: formulaire.php");
+        header("Location: dashboard.php");
         exit;
     } else {
-        echo "❌ Erreur lors du déplacement du fichier.";
+        echo "❌ Erreur lors du déplacement du fichier";
     }
 }
 ?>
