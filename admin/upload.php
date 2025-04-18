@@ -1,9 +1,10 @@
-<?php
+<?php require_once 'auth.php';
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$uploadDir = realpath(__DIR__ . '/../img/gallerie/') . '/';
+$uploadDir = realpath(__DIR__ . '/../img/galerie/') . '/';
 $metaFile = 'metadonnees.json';
 
 session_start();

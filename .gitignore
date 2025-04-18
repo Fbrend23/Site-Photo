@@ -3,3 +3,5 @@
 node_modules
 *.log
 *.lock
+admin/admin.php
+admin/auth.php
