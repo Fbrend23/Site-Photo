@@ -135,7 +135,7 @@ body{
 .content{
     margin: 0;
     padding: 0;
-    background-image: url("../img/galerie/DSC01060.jpg");
+    background-image: url("../img/gallerie/DSC01060.jpg");
     background-position: center;
     background-size: cover;
     background-attachment: fixed;
@@ -179,7 +179,7 @@ h1{
 #hamburger{
     display: none;
 }
-/*------- Galerie -------*/
+/*------- Gallerie -------*/
 
 
 .portfolio{
@@ -382,7 +382,7 @@ li{
  }
 
 
-/* Galerie mobile */
+/* Gallerie mobile */
 
  .container-img > img{
     background-color: rgb(0, 0, 0);
