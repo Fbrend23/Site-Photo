@@ -1,107 +1,92 @@
 [
     {
-        "filename": "DSC00146.jpg",
-        "category": "uncategorized",
-        "description": "DSC00146"
-    },
-    {
         "filename": "DSC00162.jpg",
-        "category": "uncategorized",
-        "description": "DSC00162"
+        "description": "Renard roux",
+        "category": "mammal"
     },
     {
         "filename": "DSC00358.jpg",
-        "category": "uncategorized",
-        "description": "DSC00358"
+        "description": "Martin-pêcheur d'Europe",
+        "category": "bird"
     },
     {
         "filename": "DSC00377.jpg",
-        "category": "uncategorized",
-        "description": "DSC00377"
+        "description": "Cygne tuberculé",
+        "category": "bird"
     },
     {
         "filename": "DSC00402.jpg",
-        "category": "uncategorized",
-        "description": "DSC00402"
-    },
-    {
-        "filename": "DSC00424.jpg",
-        "category": "uncategorized",
-        "description": "DSC00424"
-    },
-    {
-        "filename": "DSC01060.jpg",
-        "category": "uncategorized",
-        "description": "DSC01060"
-    },
-    {
-        "filename": "DSC01132.jpg",
-        "category": "uncategorized",
-        "description": "DSC01132"
-    },
-    {
-        "filename": "DSC01420.jpg",
-        "category": "uncategorized",
-        "description": "DSC01420"
-    },
-    {
-        "filename": "DSC01517.jpg",
-        "category": "uncategorized",
-        "description": "DSC01517"
-    },
-    {
-        "filename": "DSC01525.jpg",
-        "category": "uncategorized",
-        "description": "DSC01525"
-    },
-    {
-        "filename": "DSC01707.jpg",
-        "category": "uncategorized",
-        "description": "DSC01707"
-    },
-    {
-        "filename": "DSC01740.jpg",
-        "category": "uncategorized",
-        "description": "DSC01740"
-    },
-    {
-        "filename": "DSC01812.jpg",
-        "category": "uncategorized",
-        "description": "DSC01812"
-    },
-    {
-        "filename": "DSC0202.jpg",
-        "category": "uncategorized",
-        "description": "DSC0202"
-    },
-    {
-        "filename": "DSC02044.jpg",
-        "category": "uncategorized",
-        "description": "DSC02044"
-    },
-    {
-        "filename": "DSC02134.jpg",
-        "category": "uncategorized",
-        "description": "DSC02134"
-    },
-    {
-        "filename": "DSC02604.jpg",
-        "category": "uncategorized",
-        "description": "DSC02604"
-    },
-    {
-        "filename": "DSC02697.jpg",
-        "category": "uncategorized",
-        "description": "DSC02697"
+        "description": "Héron cendré",
+        "category": "bird"
     },
     {
         "filename": "DSC02707.jpg",
-        "category": "uncategorized",
-        "description": "DSC02707"
+        "description": "Campagnol",
+        "category": "mammal"
+    },
+    {
+        "filename": "DSC01517.jpg",
+        "description": "Aeschne bleue",
+        "category": "insect"
+    },
+    {
+        "filename": "DSC01707.jpg",
+        "description": "Grèbe huppé",
+        "category": "bird"
+    },
+    {
+        "filename": "DSC01740.jpg",
+        "description": "Nette rousse",
+        "category": "bird"
+    },
+    {
+        "filename": "DSC01812.jpg",
+        "description": "Cygne tuberculé",
+        "category": "bird"
+    },
+    {
+        "filename": "DSC02044.jpg",
+        "description": "Rougegorge familier",
+        "category": "bird"
+    },
+    {
+        "filename": "DSC02134.jpg",
+        "description": "Grand Cormoran",
+        "category": "bird"
     },
     {
         "filename": "DSC02795.jpg",
-        "category": "uncategorized",
-        "description": "DSC02795"
+        "description": "Cygne tuberculé",
+        "category": "bird"
+    },
+    {
+        "filename": "DSC01420.jpg",
+        "description": "Lézard des murailles",
+        "category": "reptile"
+    },
+    {
+        "filename": "DSC0202.jpg",
+        "description": "Renard roux",
+        "category": "mammal"
+    },
+    {
+        "filename": "DSC02697.jpg",
+        "description": "Ecureuil roux",
+        "category": "mammal"
+    },
+    {
+        "filename": "DSC01132.jpg",
+        "description": "Chat doméstique",
+        "category": "mammal"
+    },
+    {
+        "filename": "DSC01525.jpg",
+        "description": "Aeschne bleue",
+        "category": "insect"
+    },
+    {
+        "filename": "DSC00424.jpg",
+        "description": "Lac Léman",
+        "category": "paysage"
     }
 ]

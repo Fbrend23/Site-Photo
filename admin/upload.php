@@ -1,55 +1,48 @@
-<?php require_once 'auth.php';
+<?php
+require_once 'auth.php';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+$uploadDir = __DIR__ . '/../src/img/galerie/';
+$metaPath = __DIR__ . '/../src/php/metadonnees.json';
+$photos = [];
 
-$uploadDir = realpath(__DIR__ . '/../img/galerie/') . '/';
-$metaFile = 'metadonnees.json';
-
-session_start();
-
-if (
-    $_SERVER['REQUEST_METHOD'] === 'POST' &&
-    isset($_FILES['image']) &&
-    isset($_POST['categorie']) &&
-    isset($_POST['description'])
-) {
-    $file = $_FILES['image'];
-    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-
-    if (in_array($ext, $allowed) && $file['error'] === 0) {
-        $newName = uniqid('img_', true) . '.' . $ext;
-        $destination = $uploadDir . $newName;
-
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            echo "✅ Image déplacée avec succès<br>";
-
-            // ➕ Enregistrement dans le JSON
-            $metaPath = __DIR__ . '/' . $metaFile;
-            $metadonnees = [];
-
-            if (file_exists($metaPath)) {
-                $json = file_get_contents($metaPath);
-                $metadonnees = json_decode($json, true) ?? [];
-            }
-
-            $metadonnees[] = [
-                'filename' => $newName,
-                'category' => $_POST['categorie'],
-                'description' => htmlspecialchars($_POST['description'])
-            ];
-
-            file_put_contents($metaPath, json_encode($metadonnees, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-
-            echo "📝 Métadonnées enregistrées avec succès<br>";
-        } else {
-            echo "❌ Erreur lors du déplacement du fichier<br>";
-        }
-    } else {
-        echo "❌ Fichier non valide ou erreur à l’upload.<br>";
-    }
-} else {
-    echo "❌ Formulaire incomplet.";
+if (file_exists($metaPath)) {
+    $photos = json_decode(file_get_contents($metaPath), true) ?? [];
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
+    $file = $_FILES['image'];
+    $originalName = basename($file['name']);
+    $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+    $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+
+    if (!in_array($ext, $allowed)) {
+        die("❌ Format de fichier non autorisé.");
+    }
+
+    // Récupération du nom personnalisé s'il existe
+    $nomFichier = isset($_POST['nom']) && trim($_POST['nom']) !== ''
+        ? preg_replace('/[^a-zA-Z0-9_-]/', '_', pathinfo($_POST['nom'], PATHINFO_FILENAME)) . '.' . $ext
+        : 'img_' . uniqid('', true) . '.' . $ext;
+
+    $targetPath = $uploadDir . $nomFichier;
+
+    if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+        // Nettoyage des champs texte
+        $description = isset($_POST['description']) ? trim($_POST['description']) : '';
+        $categorie = isset($_POST['category']) ? trim($_POST['category']) : 'uncategorized';
+
+        // Ajout à la galerie
+        $photos[] = [
+            'filename' => $nomFichier,
+            'description' => htmlspecialchars($description),
+            'category' => htmlspecialchars($categorie)
+        ];
+
+        file_put_contents($metaPath, json_encode($photos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        header("Location: formulaire.php");
+        exit;
+    } else {
+        echo "❌ Erreur lors du déplacement du fichier.";
+    }
+}
+?>

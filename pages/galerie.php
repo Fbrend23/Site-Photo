@@ -39,4 +39,4 @@
         <img class="modal-content" id="modalImage">
     </div>
 </section>
-<script src="/src/js/gallerie.js"></script>
+<script src="/src/js/galerie.js"></script>

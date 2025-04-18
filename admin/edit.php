@@ -1,11 +1,7 @@
-<?php require_once 'auth.php';
-session_start();
-if (!isset($_SESSION['logged_in'])) {
-    http_response_code(403);
-    die("Accès interdit.");
-}
+<?php
+require_once 'auth.php';
 
-$metaPath = __DIR__ . '/metadonnees.json';
+$metaPath = __DIR__ . '/../src/php/metadonnees.json'; // Corriger le chemin
 
 if (
     isset($_POST['index']) &&
@@ -28,5 +24,5 @@ if (
     }
 }
 
-header("Location: admin.php");
+header("Location: dashboard.php");
 exit;

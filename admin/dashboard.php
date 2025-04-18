@@ -8,6 +8,7 @@ $photos = [];
 if (file_exists($metaPath)) {
     $photos = json_decode(file_get_contents($metaPath), true) ?? [];
 }
+
 ?>
 
 <!DOCTYPE html>
