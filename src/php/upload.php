@@ -1,43 +1,54 @@
 <?php
-$uploadDir = '../../img/gallerie/';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$uploadDir = realpath(__DIR__ . '/../img/gallerie/') . '/';
 $metaFile = 'metadonnees.json';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (
-        isset($_FILES['image']) &&
-        isset($_POST['categorie']) &&
-        isset($_POST['description'])
-    ) {
-        $file = $_FILES['image'];
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+session_start();
 
-        if (in_array($ext, $allowed) && $file['error'] === 0) {
-            $newName = uniqid('img_') . '.' . $ext;
-            $destination = $uploadDir . $newName;
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_FILES['image']) &&
+    isset($_POST['categorie']) &&
+    isset($_POST['description'])
+) {
+    $file = $_FILES['image'];
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $allowed = ['jpg', 'jpeg', 'png', 'webp'];
 
-            if (move_uploaded_file($file['tmp_name'], $destination)) {
-                // Enregistrer les métadonnées
-                $metaPath = __DIR__ . '/' . $metaFile;
-                $metadonnees = [];
+    if (in_array($ext, $allowed) && $file['error'] === 0) {
+        $newName = uniqid('img_', true) . '.' . $ext;
+        $destination = $uploadDir . $newName;
 
-                if (file_exists($metaPath)) {
-                    $json = file_get_contents($metaPath);
-                    $metadonnees = json_decode($json, true) ?? [];
-                }
+        if (move_uploaded_file($file['tmp_name'], $destination)) {
+            echo "✅ Image déplacée avec succès<br>";
 
-                $metadonnees[] = [
-                    'filename' => $newName,
-                    'category' => $_POST['categorie'],
-                    'description' => htmlspecialchars($_POST['description'])
-                ];
+            // ➕ Enregistrement dans le JSON
+            $metaPath = __DIR__ . '/' . $metaFile;
+            $metadonnees = [];
 
-                file_put_contents($metaPath, json_encode($metadonnees, JSON_PRETTY_PRINT));
-
-                header("Location: /gallerie.php?upload=success");
-                exit;
+            if (file_exists($metaPath)) {
+                $json = file_get_contents($metaPath);
+                $metadonnees = json_decode($json, true) ?? [];
             }
+
+            $metadonnees[] = [
+                'filename' => $newName,
+                'category' => $_POST['categorie'],
+                'description' => htmlspecialchars($_POST['description'])
+            ];
+
+            file_put_contents($metaPath, json_encode($metadonnees, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+            echo "📝 Métadonnées enregistrées avec succès<br>";
+        } else {
+            echo "❌ Erreur lors du déplacement du fichier<br>";
         }
+    } else {
+        echo "❌ Fichier non valide ou erreur à l’upload.<br>";
     }
-    header("Location: /formulaire.php?upload=error");
+} else {
+    echo "❌ Formulaire incomplet.";
 }

@@ -7,7 +7,7 @@
 </head>
 <body class="content">
     <h1>Ajouter une photo à la galerie</h1>
-    <form action="/src/php/upload.php" method="post" enctype="multipart/form-data">
+    <form action="upload.php" method="post" enctype="multipart/form-data">
         <label>Image : <input type="file" name="image" required></label><br>
         <label>Catégorie :
             <select name="categorie" required>
