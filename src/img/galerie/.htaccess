@@ -1,0 +1,8 @@
+# Empêche d’exécuter des scripts dans ce dossier
+<FilesMatch "\.(php|phtml|php3|php4|pl|py|jsp|asp|sh|cgi)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Désactive l’indexation des fichiers du dossier
+Options -Indexes
