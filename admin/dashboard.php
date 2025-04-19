@@ -20,7 +20,7 @@ if (file_exists($metaPath)) {
 </head>
 <body class="backoffice">
     <h1>🎛️ Back-Office Galerie</h1>
-    <p><a href="formulaire.php">📤 Ajouter une nouvelle image</a> | <a href="logout.php">🔒 Se déconnecter</a></p>
+    <p><a href="formulaire.php">📤 Ajouter une nouvelle image</a> | <a href="/admin/logout.php">🔒 Se déconnecter</a></p>
 
     <?php if (empty($photos)): ?>
         <p>📂 Aucune image dans la galerie.</p>
