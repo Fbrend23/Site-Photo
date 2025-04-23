@@ -37,6 +37,7 @@ if (file_exists($metaPath)) {
     <div class="caption"></div>
     <a class="previous">&#10094;</a>
     <a class="next">&#10095;</a>
+    <div id="loader" class="loader hidden"></div>
 </div>
 
 <script src="/src/js/galerie.js"></script>
