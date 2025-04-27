@@ -1,4 +1,4 @@
-<?php require_once 'auth.php';
+<?php
 
 $metaPath = __DIR__ . '/../src/php/metadonnees.json';
 $imgDir = __DIR__ . '/../src/img/galerie/';

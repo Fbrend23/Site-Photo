@@ -1,5 +1,5 @@
 <?php
-require_once 'auth.php';
+
 
 $metaPath = __DIR__ . '/metadonnees.json';
 $uploadDir = '../src/img/galerie/';

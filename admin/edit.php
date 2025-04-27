@@ -1,5 +1,5 @@
 <?php
-require_once 'auth.php';
+
 
 $metaPath = __DIR__ . '/../src/php/metadonnees.json'; // Corriger le chemin
 
