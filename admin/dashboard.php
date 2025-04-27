@@ -1,6 +1,15 @@
 <?php
+$title = "Tableau de bord";
 
+ob_start();
+?>
+    <h1>🎛️ Tableau de bord</h1>
+<?php
+$content = ob_get_clean();
 
+require 'layout-admin.php';
+?>
+<?php
 $metaPath = __DIR__ . '/../src/php/metadonnees.json';
 $imgDir = '../src/img/galerie/';
 $photos = [];
@@ -19,9 +28,6 @@ if (file_exists($metaPath)) {
     <link rel="stylesheet" href="../src/css/backoffice.css"> 
 </head>
 <body class="backoffice">
-    <h1>🎛️ Back-Office Galerie</h1>
-    <p><a href="formulaire.php">📤 Ajouter une nouvelle image</a> | <a href="/accueil">🔒 Se déconnecter</a></p>
-
     <?php if (empty($photos)): ?>
         <p>📂 Aucune image dans la galerie.</p>
     <?php else: ?>

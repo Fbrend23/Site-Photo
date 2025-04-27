@@ -7,9 +7,10 @@ $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
     <meta charset="UTF-8">
     <title><?= $title ?? 'Admin' ?></title>
     <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/backoffice.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="content">
+<body class="content backoffice">
     <!-- 🔝 HEADER PUBLIC -->
     <header class="site-header">
         <a href="/accueil"><img class="logo mobile" src="/src/img/logo.png" alt="logo"></a>
@@ -36,15 +37,15 @@ $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
     </header>
 
     <!-- 🛠️ NAV ADMIN -->
-    <section class="admin-header" style="background:#222; padding: 1rem; color: white;">
-        <strong>🎛️ Back-Office</strong> |
-        <a href="/admin/admin.php" style="color: white;">Tableau de bord</a> |
-        <a href="/admin/formulaire.php" style="color: white;">Ajouter</a> |
-        <a href="/admin/logout.php" style="color: white;">Déconnexion</a>
+    <section class="admin-header">
+        <strong>🎛️ Back-Office</strong> | 
+        <a href="/admin/admin.php">Tableau de bord</a> | 
+        <a href="/admin/formulaire.php">Ajouter</a> | 
+        <a href="/accueil">Déconnexion</a>
     </section>
 
     <!-- 🧱 CONTENU -->
-    <main class="container" style="padding: 2rem;">
+    <main class="container">
         <?= $content ?>
     </main>
 

@@ -1,13 +1,15 @@
 /* backoffice.css */
 
-body.backoffice {
+body {
     font-family: sans-serif;
     padding: 2rem;
     background-color: #111;
     color: #fff;
     margin: 0;
 }
-
+ input, select, button{
+    font-family: sans-serif;
+}
 h1 {
     margin-bottom: 1rem;
     font-size: 2rem;
