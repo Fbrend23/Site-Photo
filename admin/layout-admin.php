@@ -24,7 +24,7 @@ $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
                         <a href="/galerie" class="<?= ($uri === 'galerie') ? 'active' : '' ?>">Galerie</a>
                     </li>
                     <li>
-                        <a href="#" class="contact">Contact</a>
+                        <!-- <a href="#" class="contact">Contact</a> -->
                     </li>
                 </ul>
             </nav>

@@ -22,7 +22,7 @@
                     <a href="/galerie" class="<?= ($uri === 'galerie') ? 'active' : '' ?>">Galerie</a>
                 </li>
                 <li>
-                    <a href="#" class="contact">Contact</a>
+                    <!-- <a href="#" class="contact">Contact</a> -->
                 </li>
             </ul>
         </nav>
