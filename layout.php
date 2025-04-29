@@ -11,7 +11,7 @@
 <body class="content">
 
 <header class="site-header">
-    <a href="/accueil"><img class="logo mobile" src="/src/img/logo.png" alt="logo"></a>
+    <a href="https://brendanfleurdelys.ch"><img class="logo mobile" src="/src/img/logo.png" alt="logo"></a>
     <div class="nav-container">
     <nav class="navigation">
             <ul class="main-list">
