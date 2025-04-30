@@ -36,6 +36,11 @@
 
 <?= $content ?>
 
-<footer></footer>
+<footer>
+    <div class="footer-links">
+  <p>© 2025 Brendan Fleurdelys</p>
+    <a href="/mentions-legales">Mentions légales</a>
+</div>
+</footer>
 </body>
 </html>

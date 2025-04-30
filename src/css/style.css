@@ -180,6 +180,51 @@ h1{
 #hamburger{
     display: none;
 }
+
+footer{
+    width: 100%;
+    margin: 5px auto;
+    padding: 5px;
+}
+
+.footer-links{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 10px;
+}
+.footer-links *{
+    font-family: Arial;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.682);
+    text-align: center;
+    padding: 0;
+    margin: 0 5px;
+}
+
+.mentions-legales {
+    padding: 2rem;
+    line-height: 1.6;
+}
+.mentions-legales *{
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+.mentions-legales h1{
+    color: #0077cc;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+.mentions-legales h2 {
+    text-align: left;
+    font-size: 1.6rem;
+
+}
+.mentions-legales p {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
 /*------- Gallerie -------*/
 
 

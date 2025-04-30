@@ -11,6 +11,9 @@ switch ($uri) {
     case 'galerie':
         $page = 'galerie';
         break;
+    case 'mentions-legales':
+        $page = 'mentions-legales';
+        break;
         
     case 'admin':
         $subPage = $segments[1] ?? 'dashboard';
