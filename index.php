@@ -11,6 +11,9 @@ switch ($uri) {
     case 'galerie':
         $page = 'galerie';
         break;
+    case 'contact':
+        $page = 'contact';
+        break;
     case 'mentions-legales':
         $page = 'mentions-legales';
         break;

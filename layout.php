@@ -22,7 +22,7 @@
                     <a href="/galerie" class="<?= ($uri === 'galerie') ? 'active' : '' ?>">Galerie</a>
                 </li>
                 <li>
-                    <!-- <a href="#" class="contact">Contact</a> -->
+                    <a href="https://contact.brendanfleurdelys.ch/index.php?origin=photo" class="contact">Contact</a>
                 </li>
             </ul>
         </nav>

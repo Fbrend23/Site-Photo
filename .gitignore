@@ -7,3 +7,4 @@ admin/auth.php
 *.jpg
 admin/convert-to-webp.php
 *.webp
+/libs/phpmailer
