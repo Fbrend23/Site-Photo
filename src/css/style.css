@@ -128,20 +128,35 @@ button:hover{
 body{
     background-color: var(--background);
     width: inherit;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease;   
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
 }
 
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-.content{
-    margin: 0;
-    padding: 0;
-    background-image: url("../img/galerie/DSC01060.jpg");
-    background-position: center;
+main{
+    flex: 1;
+}
+
+body:before{
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("/src/img/galerie/DSC01060.webp");
     background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    height: 100svh;
-    overflow-y: auto;
+    background-position: center;
+    opacity: 0.8;
+    z-index: -1;
 }
 
 
@@ -150,9 +165,9 @@ body{
     flex-flow: column wrap;
     justify-content: center;
     align-items: center;
-    height: 500px;
     width: 80%; 
-    margin: 100px auto;
+    margin: 10rem auto;
+
 }
 
 h2{
@@ -183,8 +198,9 @@ h1{
 
 footer{
     width: 100%;
-    margin: 5px auto;
+    margin: auto auto;
     padding: 5px;
+    justify-self: end;
 }
 
 .footer-links{

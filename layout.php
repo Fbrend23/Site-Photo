@@ -33,14 +33,15 @@
         <div class="bar3"></div>
     </div>
 </header>
-
-<?= $content ?>
-
-<footer>
-    <div class="footer-links">
-  <p>© 2025 Brendan Fleurdelys</p>
-    <a href="/mentions-legales">Mentions légales</a>
-</div>
+    <main>
+        <?= $content ?>
+    </main>
+    <footer>
+        <div class="footer-links">
+            <p>© 2025 Brendan Fleurdelys</p>
+            <a href="/mentions-legales">Mentions légales</a>
+        </div>
 </footer>
+<script src="/src/js/index.js"></script>
 </body>
 </html>
