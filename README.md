@@ -1,19 +1,85 @@
-# 📷 Site-Photo
+# Site-Photo
 
-[![Made with PHP](https://img.shields.io/badge/PHP-8.0+-777BB4?logo=php&logoColor=white)](https://www.php.net/)
-[![Last Commit](https://img.shields.io/github/last-commit/Fbrend23/Site-Photo?color=brightgreen)](https://github.com/Fbrend23/Site-Photo/commits/main)
-[![License](https://img.shields.io/github/license/Fbrend23/Site-Photo)](./LICENSE)
-
----
-
-## 📝 Description
-
-**Site-Photo** est un site web simple développé en **PHP** pour présenter une collection de photos personnelles.  
-Le projet met l’accent sur une **navigation fluide**, un **design épuré** et une **organisation claire** des fichiers.
+[![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 
 ---
 
-## 🌿 Fonctionnalités
+## Description
 
-- **Page d’accueil** avec introduction ou visuel principal  
-- **Galerie d’images** organisée dans des pages séparées  
+**Site-Photo** is a photography portfolio website for **Brendan Fleurdelys**. It features a public gallery with category filtering and lightbox, plus an admin back-office for managing photos.
+
+**Tech stack:** Vue 3 + Vite + TypeScript (frontend), Node.js + Express (API), Tailwind CSS, Docker.
+
+---
+
+## Features
+
+- Animated home page with hero section
+- Photo gallery with category filtering (mammals, birds, insects, reptiles, landscapes)
+- Lightbox modal with prev/next navigation and keyboard support
+- Admin dashboard with inline photo editing
+- Image upload with automatic WebP conversion
+- Responsive design with mobile hamburger menu
+- Dark theme with Dancing Script typography
+
+---
+
+## Project Structure
+
+```
+client/          Vue 3 SPA (Vite + TypeScript + Tailwind)
+server/          Node.js API (Express + TypeScript)
+  data/          Gallery images + metadata JSON
+```
+
+---
+
+## Development
+
+```bash
+# Install dependencies
+cd client && npm install
+cd ../server && npm install
+
+# Start dev servers
+cd server && npm run dev    # API on http://localhost:3000
+cd client && npm run dev    # Vite on http://localhost:5173
+```
+
+The Vite dev server proxies `/api` and `/uploads` to the Express API.
+
+---
+
+## Production (Docker)
+
+```bash
+# Build client and server
+cd client && npm run build
+cd ../server && npm run build
+
+# Run with Docker
+docker compose up --build
+```
+
+The app will be available at `http://localhost:8080`.
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/photos` | List all photos |
+| GET | `/api/photos/:id` | Get single photo |
+| POST | `/api/photos/upload` | Upload image (multipart) |
+| PUT | `/api/photos/:id` | Update description/category |
+| DELETE | `/api/photos/:id` | Delete photo |
+
+---
+
+## License
+
+MIT - Brendan Fleurdelys

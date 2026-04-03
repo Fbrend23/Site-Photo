@@ -1,10 +1,19 @@
 .env
-/vendor
 node_modules
 *.log
+
+# Build outputs
+client/dist
+server/dist
+
+# Gallery images (user content, not committed)
+server/data/galerie/*.webp
+server/data/galerie/*.jpg
+server/data/galerie/*.png
+
+# Legacy PHP
+/vendor
 *.lock
 admin/auth.php
-*.jpg
 admin/convert-to-webp.php
-*.webp
 /libs/phpmailer

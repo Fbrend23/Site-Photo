@@ -1,22 +1,23 @@
-FROM php:8.2-apache
+FROM node:20-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libjpeg-dev \
-    libpng-dev \
-    libwebp-dev \
-    libfreetype6-dev \
-    && docker-php-ext-configure gd \
-        --with-jpeg \
-        --with-webp \
-        --with-freetype \
-    && docker-php-ext-install gd
+WORKDIR /app
 
-# Active mod_rewrite
-RUN a2enmod rewrite
+# Install vips for sharp (image processing)
+RUN apk add --no-cache vips-dev
 
-# Copie ton php.ini perso
-COPY ./php.ini /usr/local/etc/php/conf.d/custom.ini
+# Install server dependencies
+COPY server/package.json server/package-lock.json ./server/
+RUN cd server && npm ci --production
 
-# Travaille dans /var/www/html
-WORKDIR /var/www/html
+# Copy built client
+COPY client/dist ./client/dist
+
+# Copy server source (pre-compiled)
+COPY server/dist ./server/dist
+COPY server/data ./server/data
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["node", "server/dist/index.js"]

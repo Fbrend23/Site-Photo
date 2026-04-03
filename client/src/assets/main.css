@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap");
+
+:root {
+  --site-black: #0e0e10;
+  --site-blue: #1fa0cc;
+  --site-accent: #3da9fc;
+  --site-white: #eeeeee;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--site-black);
+  color: var(--site-white);
+  font-family: "Dancing Script", cursive;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/uploads/galerie/DSC01060.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  z-index: -1;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

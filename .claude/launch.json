@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Express API Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "server", "run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "Vue Client (Vite)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "client", "run", "dev"],
+      "port": 5173
+    }
+  ]
+}
