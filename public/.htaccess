@@ -1,9 +1,12 @@
 # Copié tel quel dans .output/public/ par nuxt generate, puis déployé par rsync.
-# Trois rôles seulement : HTTPS, DirectoryIndex, cache long sur les assets hashés.
+# Quatre rôles seulement : HTTPS, DirectoryIndex, cache long sur les assets
+# hashés, et aucun fichier caché servi (dont le marqueur .preprod-cible).
 
 RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RedirectMatch 404 "/\."
 
 DirectoryIndex index.html
 

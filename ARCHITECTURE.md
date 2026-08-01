@@ -14,7 +14,7 @@ côté serveur en production.**
 
 ```
 Script local  →  GitHub  →  Actions                    →  Infomaniak
-master + fiche   commit     récupère, encode, generate    rsync vers /web
+master + fiche   commit     récupère, encode, generate    lftp vers le site
 ```
 
 ## Les briques
@@ -24,13 +24,13 @@ master + fiche   commit     récupère, encode, generate    rsync vers /web
 | Framework | Nuxt 4 (Vue 3) | Vue déjà maîtrisé. Routing par fichiers, imports auto, écosystème de modules. |
 | Rendu | SSG — `nuxt generate` | Le contenu ne change qu'à la publication. Meilleur SEO, zéro exécution serveur. |
 | Contenu | `@nuxt/content` v3 | Collection `photos` typée : master, description, catégorie, lieu, date. |
-| Médias | Dossier privé Infomaniak | Hors racine web. 250 Go déjà payés, trafic illimité, même clé SSH que le déploiement. |
+| Médias | Dossier privé Infomaniak | Hors racine web. 250 Go déjà payés, trafic illimité, compte FTP restreint dédié. |
 | Images | `sharp`, cache par hash | AVIF + WebP multi-largeurs, encodés une seule fois par photo et par profil. |
 | SEO | `@nuxtjs/seo` | Sitemap, robots.txt, Open Graph, JSON-LD. Nécessite `site.url` (voir plus bas). |
 | Styles | CSS repris de l'existant | `style.css` réutilisable presque tel quel. Pas de refonte visuelle imposée. |
 | Publication | Script local | Une commande : master, envoi, fiche, commit. Pas de CMS à maintenir. |
 | CI | GitHub Actions | Le build tourne sur du CPU gratuit, pas sur le mutualisé. |
-| Déploiement | `rsync` over SSH | Synchronisation du dossier de sortie, `--delete` pour purger l'obsolète. |
+| Déploiement | `lftp` en FTPS | Miroir du dossier de sortie (`--delete` purge l'obsolète), compte FTP restreint au dossier du site. |
 | Hébergement | Infomaniak mutualisé | Apache + `.htaccess`. Sert du statique. SSL Let's Encrypt inclus. |
 
 **Gardé en réserve :** l'offre inclut 1 site Node.js et MariaDB illimité, tous deux
@@ -145,9 +145,10 @@ pnpm photo:add ~/Exports/DSC03412.jpg \
   --categorie bird --lieu "Étang de la Gruère"
 ```
 
-Le script redimensionne l'export en master 3000 px si nécessaire, l'envoie par SSH dans le
-dossier privé, écrit la fiche dans `content/photos/`, commit et pousse. Le déploiement part
-tout seul.
+Le script redimensionne l'export en master 3000 px si nécessaire et écrit la fiche dans
+`content/photos/`. Il reste à envoyer le master dans le dossier privé (scp ou client FTP),
+puis à commiter et pousser la fiche — dans cet ordre : la CI lit les masters du serveur.
+Le déploiement part tout seul.
 
 Catégories existantes : `bird`, `mammal`, `insect`, `reptile`, `paysage`.
 
@@ -159,12 +160,14 @@ Catégories existantes : `bird`, `mammal`, `insect`, `reptile`, `paysage`.
   with: { node-version: 24, cache: pnpm }   # Nuxt 4.4 exige >=22.12 ou >=24.11
 - run: pnpm install --frozen-lockfile
 
-# 0 · garde-fou : --delete sur le mauvais chemin efface le site en production
+# 0 · garde-fou : la publication passe par un compte FTP restreint au dossier du
+#     site préprod (seule restriction par dossier possible chez Infomaniak) — même
+#     en cas d'erreur, mirror --delete ne peut pas toucher la production. Le
+#     marqueur vérifie que les secrets pointent le bon compte.
 - name: Vérifier la cible de déploiement
-  env: { DEPLOY_PATH: "${{ secrets.DEPLOY_PATH }}" }
   run: |
-    [[ "$DEPLOY_PATH" == *preprod* ]] \
-      || { echo "::error::DEPLOY_PATH inattendu — abandon"; exit 1; }
+    lftp -u $FTP_USER,$FTP_PASSWORD -e "cls .preprod-cible; quit" $FTP_HOST \
+      || { echo "::error::Marqueur .preprod-cible absent — abandon"; exit 1; }
 
 # 1 · masters : le cache évite de tout retélécharger
 #     À l'échelle (>200 photos) c'est le premier poste à couper : on sauvegarde
@@ -174,7 +177,7 @@ Catégories existantes : `bird`, `mammal`, `insect`, `reptile`, `paysage`.
     path: masters
     key: src-${{ hashFiles('content/photos/**') }}
     restore-keys: src-
-- run: rsync -az $USER@$HOST:~/masters/ masters/
+- run: lftp -e "mirror galerie/ masters/galerie/" …   # compte restreint à masters/
 
 # 2 · variantes : seul le neuf est encodé
 - uses: actions/cache@v4
@@ -184,9 +187,9 @@ Catégories existantes : `bird`, `mammal`, `insect`, `reptile`, `paysage`.
     restore-keys: img-
 - run: node scripts/build-images.mjs
 
-# 3 · build puis déploiement (séquentiel : pas de rsync si generate échoue)
+# 3 · build puis déploiement (séquentiel : pas de publication si generate échoue)
 - run: pnpm generate
-- run: rsync -az --delete .output/public/ $USER@$HOST:$DEPLOY_PATH/
+- run: lftp -e "mirror -R --delete --exclude-glob .preprod-cible .output/public/ ./" …
 ```
 
 **Détail qui compte :** les deux caches sont indexés sur `content/photos/**`, pas sur les
@@ -198,15 +201,19 @@ C'est le `restore-keys` en préfixe qui permet de récupérer le cache précéde
 contient déjà l'essentiel du travail. Éditer une description invalide la clé mais ne
 réencode rien : le préfixe restaure les variantes, le script les trouve et les saute.
 
-**Le tout premier déploiement se fait en `--dry-run`.** `rsync -az --delete` vers un chemin
-erroné efface le site PHP vivant, sans corbeille. C'est le risque à plus grand rayon
-d'impact de toute la migration.
+**Le tout premier déploiement se fait en `--dry-run`.** Un `--delete` vers la mauvaise
+cible efface un site vivant, sans corbeille — c'est le risque à plus grand rayon d'impact
+de toute la migration. Le compte FTP restreint le rend impossible sur la production ; le
+`--dry-run` valide le reste (liste des fichiers, cible, exclusion du marqueur).
 
-Secrets : `SSH_PRIVATE_KEY`, `SSH_HOST`, `SSH_USER`, `SSH_KNOWN_HOSTS`, `DEPLOY_PATH`.
-La clé publique est déposée côté Infomaniak via le manager.
+Secrets : `FTP_HOST`, puis `MASTERS_USER` / `MASTERS_PASSWORD` (compte restreint à
+`masters/`, lecture des photos sources) et `DEPLOY_USER` / `DEPLOY_PASSWORD` (compte
+restreint au dossier du site préprod, publication en FTPS par lftp). Infomaniak ne gère
+pas les clés SSH : tout passe en FTPS, chaque compte cloisonné à son dossier.
 
-Le `.htaccess` ne sert plus qu'à trois choses : `DirectoryIndex`, cache long et `immutable`
-sur les assets aux noms hashés, redirection HTTPS.
+Le `.htaccess` ne sert plus qu'à quatre choses : `DirectoryIndex`, cache long et `immutable`
+sur les assets aux noms hashés, redirection HTTPS, et aucun fichier caché servi (dont le
+marqueur `.preprod-cible`).
 
 ## SEO
 
@@ -323,8 +330,9 @@ par SSH. Sveltia CMS gère nativement le stockage de médias externe.
 
 - **Pas de `window` ni `document` hors de `onMounted`** — le code s'exécute d'abord au
   build, sans navigateur. Seul vrai écart avec le Vue classique.
-- **`rsync --delete` vers un mauvais chemin efface la production.** Garde-fou dans le
-  workflow, `--dry-run` au premier déploiement.
+- **Un `--delete` vers un mauvais chemin efface la production.** Parade : compte FTP
+  restreint au dossier du site + marqueur `.preprod-cible` vérifié par le workflow,
+  `--dry-run` au premier déploiement.
 - **Le cache d'images doit inclure le hash du profil d'encodage**, sinon les changements de
   réglage sont silencieusement ignorés.
 - **Les masters ne sont pas une sauvegarde** — dérivés du catalogue et régénérables, mais

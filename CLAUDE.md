@@ -19,7 +19,9 @@ Ne pas les remettre en question sans demande explicite — elles ont été arbit
 - **Encodage découplé de la prérendue Nuxt** : `scripts/build-images.mjs`, idempotent,
   exécuté avant `nuxt generate`.
 - **Publication par script local** (`scripts/ajouter-photo.mjs`), pas de CMS.
-- **Déploiement** : GitHub Actions → `rsync -az --delete`. Cache Actions indexé sur
+- **Déploiement** : GitHub Actions → `lftp mirror --delete` en FTPS. Deux comptes FTP
+  restreints chacun à leur dossier (site préprod, masters) — Infomaniak ne gère pas les
+  clés SSH, aucun accès SSH en CI. Cache Actions indexé sur
   `content/photos/**` (les fiches sont dans le dépôt, donc leur hash est connu avant tout
   téléchargement des masters).
 - **URL conservées à l'identique** : `/accueil`, `/galerie`, `/mentions-legales`.
@@ -31,14 +33,15 @@ Ces quatre points ont chacun causé ou éviteront un défaut réel. Les respecte
 1. **La clé de cache d'images inclut le hash du profil d'encodage**, pas seulement le
    sha256 du master. Sans ça, changer `quality`, `effort` ou ajouter une largeur resservira
    silencieusement les anciennes variantes.
-2. **`rsync --delete` est vérifié avant exécution.** Un `DEPLOY_PATH` erroné efface le site
-   PHP en production, sans corbeille. Garde-fou dans le workflow + `--dry-run` au premier
-   déploiement.
+2. **Le `--delete` du déploiement ne peut jamais atteindre la production.** La publication
+   passe par un compte FTP restreint au dossier du site préprod (seule restriction par
+   dossier possible chez Infomaniak), et le workflow vérifie un marqueur `.preprod-cible`
+   sur la cible avant toute écriture. `--dry-run` au premier déploiement.
 3. **Une variante 1600 px est produite dès la phase 1** pour la modale plein écran, en AVIF
    *et* en WebP. Sans elle, phase 2 impose de tout réencoder.
 4. **Ne jamais ajouter de binaire lourd au dépôt.** `*.jpg` et `*.webp` restent dans
-   `.gitignore` comme garde-fou. Pour tester localement, récupérer des masters par rsync
-   dans `masters/` (ignoré).
+   `.gitignore` comme garde-fou. Pour tester localement, récupérer des masters (scp ou
+   client FTP) dans `masters/` (ignoré).
 
 ## Hébergement
 
@@ -62,8 +65,9 @@ lisant le code du dépôt, où le fichier d'authentification est absent.
   Pas de redirection côté client.
 - `.gitignore` : `*.lock` a été retiré (il excluait `pnpm-lock.yaml`, ce qui casse
   `pnpm install --frozen-lockfile`).
-- La clé SSH et l'hôte sont dans les GitHub Secrets, jamais dans le dépôt.
-- `rsync` de déploiement uniquement après un `generate` réussi.
+- Les identifiants FTP (hôte, comptes, mots de passe) sont dans les GitHub Secrets,
+  jamais dans le dépôt.
+- Publication (`lftp mirror`) uniquement après un `generate` réussi.
 
 ## État actuel du dépôt
 

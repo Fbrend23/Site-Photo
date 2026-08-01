@@ -1,8 +1,17 @@
-# Déploiement préprod : récupère les masters, encode le neuf, génère, rsync.
+# Déploiement préprod : récupère les masters, encode le neuf, génère, publie.
+# Tout passe en FTPS (lftp) — Infomaniak ne gère pas les clés SSH, et les
+# comptes FTP sont restreignables à un dossier, ce qui cloisonne chaque accès :
 #
-# Secrets requis : SSH_PRIVATE_KEY, SSH_HOST, SSH_USER, SSH_KNOWN_HOSTS, DEPLOY_PATH.
-# DEPLOY_PATH doit contenir « preprod » (garde-fou : `rsync --delete` vers un
-# mauvais chemin efface le site PHP en production, sans corbeille).
+#   MASTERS_USER / MASTERS_PASSWORD — compte restreint à masters/ (photos sources)
+#   DEPLOY_USER / DEPLOY_PASSWORD   — compte restreint au dossier du site préprod :
+#                                     même en cas d'erreur, mirror --delete ne peut
+#                                     pas toucher le site en production.
+#
+# Secrets requis : FTP_HOST, MASTERS_USER, MASTERS_PASSWORD, DEPLOY_USER, DEPLOY_PASSWORD.
+#
+# Garde-fou : le fichier .preprod-cible doit exister à la racine du compte de
+# déploiement (créé une fois à la main). Si les secrets pointent sur le mauvais
+# compte, le marqueur n'y est pas et le workflow s'arrête avant toute écriture.
 #
 # PREMIER DÉPLOIEMENT : lancer manuellement (workflow_dispatch) avec dry_run=true
 # et vérifier la liste des fichiers avant un vrai run.
@@ -15,7 +24,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'rsync en --dry-run (aucune écriture côté serveur)'
+        description: 'mirror en --dry-run (aucune écriture côté serveur)'
         type: boolean
         default: false
 
@@ -38,27 +47,25 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # 0 · Garde-fou avant tout : pas de --delete vers un chemin inattendu.
+      - name: Installer lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      # 0 · Garde-fou avant tout : la cible doit porter le marqueur préprod.
       - name: Vérifier la cible de déploiement
         env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
         run: |
-          [[ "$DEPLOY_PATH" == *preprod* ]] \
-            || { echo "::error::DEPLOY_PATH ne contient pas « preprod » — abandon."; exit 1; }
-
-      - name: Configurer SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-        run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          lftp -u "$DEPLOY_USER,$DEPLOY_PASSWORD" \
+            -e "set ftp:ssl-force yes; set cmd:fail-exit yes; cls .preprod-cible; quit" \
+            "$FTP_HOST" \
+            || { echo "::error::Marqueur .preprod-cible absent sur la cible — abandon."; exit 1; }
 
       # 1 · Masters : le cache évite de tout retélécharger.
       #     Clés indexées sur content/photos/** : le hash des fiches est connu
-      #     avant tout téléchargement. restore-keys récupère le cache précédent.
+      #     avant tout téléchargement. restore-keys récupère le cache précédent,
+      #     et mirror ne télécharge que ce qui manque.
       - name: Cache des masters
         uses: actions/cache@v4
         with:
@@ -68,9 +75,14 @@ jobs:
 
       - name: Récupérer les masters
         env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-        run: rsync -az "$SSH_USER@$SSH_HOST:masters/galerie/" masters/galerie/
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          MASTERS_USER: ${{ secrets.MASTERS_USER }}
+          MASTERS_PASSWORD: ${{ secrets.MASTERS_PASSWORD }}
+        run: |
+          mkdir -p masters/galerie
+          lftp -u "$MASTERS_USER,$MASTERS_PASSWORD" \
+            -e "set ftp:ssl-force yes; set cmd:fail-exit yes; mirror --verbose galerie/ masters/galerie/; quit" \
+            "$FTP_HOST"
 
       # 2 · Variantes : seul le neuf est encodé (cache par hash contenu + profil).
       - name: Cache des variantes
@@ -83,17 +95,22 @@ jobs:
       - name: Encoder les images
         run: node scripts/build-images.mjs
 
-      # 3 · Build puis déploiement — séquentiel : pas de rsync si generate échoue.
+      # 3 · Build puis déploiement — séquentiel : pas de publication si generate échoue.
       - name: Générer le site
         env:
           NUXT_PUBLIC_SITE_URL: https://preprod.brendanfleurdelys.ch
           NUXT_SITE_ENV: preview
         run: pnpm generate
 
+      # --exclude-glob préserve le marqueur du --delete ; la racine du compte
+      # de déploiement est le dossier du site, d'où la cible « ./ ».
       - name: Déployer
         env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
           DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
-        run: rsync -az --delete $DRY_RUN --itemize-changes .output/public/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+        run: |
+          lftp -u "$DEPLOY_USER,$DEPLOY_PASSWORD" \
+            -e "set ftp:ssl-force yes; set cmd:fail-exit yes; mirror -R --delete --parallel=4 --verbose $DRY_RUN --exclude-glob .preprod-cible .output/public/ ./; quit" \
+            "$FTP_HOST"

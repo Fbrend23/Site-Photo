@@ -105,6 +105,6 @@ console.log(`Fiche  : ${path.relative(ROOT, fiche)}`)
 // 3 · Ce qui reste à faire, dans l'ordre
 console.log(`
 Étapes suivantes, dans cet ordre (la CI lit les masters du serveur) :
-  1. rsync -az masters/galerie/${master} <user>@<hote>:masters/galerie/
+  1. scp masters/galerie/${master} <user>@<hote>:masters/galerie/
   2. git add ${path.relative(ROOT, fiche).replaceAll('\\', '/')} && git commit && git push
 `)
