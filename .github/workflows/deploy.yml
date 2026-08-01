@@ -1,43 +1,55 @@
-# Déploiement préprod : récupère les masters, encode le neuf, génère, publie.
+# Déploiement : récupère les masters, encode le neuf, génère, publie.
 # Tout passe en FTPS (lftp) — Infomaniak ne gère pas les clés SSH, et les
 # comptes FTP sont restreignables à un dossier, ce qui cloisonne chaque accès :
 #
 #   MASTERS_USER / MASTERS_PASSWORD — compte restreint à masters/ (photos sources)
-#   DEPLOY_USER / DEPLOY_PASSWORD   — compte restreint au dossier du site préprod :
-#                                     même en cas d'erreur, mirror --delete ne peut
-#                                     pas toucher le site en production.
+#   DEPLOY_USER / DEPLOY_PASSWORD   — compte restreint au dossier du site PRÉPROD
+#   PROD_USER / PROD_PASSWORD       — compte restreint au docroot de PRODUCTION
 #
-# Secrets requis : FTP_HOST, MASTERS_USER, MASTERS_PASSWORD, DEPLOY_USER, DEPLOY_PASSWORD.
+# Deux cibles :
+#   préprod    — automatique à chaque push sur develop, ou manuelle
+#   production — MANUELLE UNIQUEMENT (workflow_dispatch, cible « production »),
+#                build avec l'URL canonique et robots.txt indexable
 #
-# Garde-fou : le fichier .preprod-cible doit exister à la racine du compte de
-# déploiement (créé une fois à la main). Si les secrets pointent sur le mauvais
-# compte, le marqueur n'y est pas et le workflow s'arrête avant toute écriture.
+# Garde-fou par cible : un marqueur (.preprod-cible / .prod-cible) doit exister à
+# la racine du compte visé, créé une fois à la main. Si les secrets pointent sur
+# le mauvais compte, le marqueur n'y est pas et tout s'arrête avant écriture.
+# Chaque compte étant chrooté sur son dossier, une erreur de cible ne peut de
+# toute façon pas toucher l'autre site.
 #
-# PREMIER DÉPLOIEMENT : lancer manuellement (workflow_dispatch) avec dry_run=true
-# et vérifier la liste des fichiers avant un vrai run.
+# PREMIER DÉPLOIEMENT d'une cible : dry_run=true, vérifier la liste des fichiers.
 
-name: Déploiement préprod
+name: Déploiement
 
-# Déclenchement manuel uniquement tant que la préprod n'est pas validée —
-# un trigger sur push lancerait un déploiement réel avant le premier dry_run.
-# Une fois le premier déploiement vérifié, réactiver :
-#   push:
-#     branches: [develop]
 on:
+  push:
+    branches: [develop]
   workflow_dispatch:
     inputs:
+      cible:
+        description: 'Cible de déploiement'
+        type: choice
+        options: [preprod, production]
+        default: preprod
       dry_run:
         description: 'mirror en --dry-run (aucune écriture côté serveur)'
         type: boolean
         default: false
 
 concurrency:
-  group: deploy
+  group: deploy-${{ inputs.cible || 'preprod' }}
   cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      # Un push déploie toujours la préprod ; la production exige le dispatch.
+      CIBLE: ${{ inputs.cible || 'preprod' }}
+      CIBLE_USER: ${{ inputs.cible == 'production' && secrets.PROD_USER || secrets.DEPLOY_USER }}
+      CIBLE_PASSWORD: ${{ inputs.cible == 'production' && secrets.PROD_PASSWORD || secrets.DEPLOY_PASSWORD }}
+      MARQUEUR: ${{ inputs.cible == 'production' && '.prod-cible' || '.preprod-cible' }}
+      FTP_HOST: ${{ secrets.FTP_HOST }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,17 +65,14 @@ jobs:
       - name: Installer lftp
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
-      # 0 · Garde-fou avant tout : la cible doit porter le marqueur préprod.
+      # 0 · Garde-fou avant tout : la cible doit porter son marqueur.
       - name: Vérifier la cible de déploiement
-        env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
         run: |
-          lftp -u "$DEPLOY_USER,$DEPLOY_PASSWORD" \
-            -e "set ftp:ssl-force yes; set cmd:fail-exit yes; cls .preprod-cible; quit" \
+          echo "Cible : $CIBLE (marqueur attendu : $MARQUEUR)"
+          lftp -u "$CIBLE_USER,$CIBLE_PASSWORD" \
+            -e "set ftp:ssl-force yes; set cmd:fail-exit yes; cls $MARQUEUR; quit" \
             "$FTP_HOST" \
-            || { echo "::error::Marqueur .preprod-cible absent sur la cible — abandon."; exit 1; }
+            || { echo "::error::Marqueur $MARQUEUR absent sur la cible — abandon."; exit 1; }
 
       # 1 · Masters : le cache évite de tout retélécharger.
       #     Clés indexées sur content/photos/** : le hash des fiches est connu
@@ -78,7 +87,6 @@ jobs:
 
       - name: Récupérer les masters
         env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
           MASTERS_USER: ${{ secrets.MASTERS_USER }}
           MASTERS_PASSWORD: ${{ secrets.MASTERS_PASSWORD }}
         run: |
@@ -99,21 +107,19 @@ jobs:
         run: node scripts/build-images.mjs
 
       # 3 · Build puis déploiement — séquentiel : pas de publication si generate échoue.
+      #     La préprod reste non indexable (NUXT_SITE_ENV=preview → robots bloquant).
       - name: Générer le site
         env:
-          NUXT_PUBLIC_SITE_URL: https://preprod.brendanfleurdelys.ch
-          NUXT_SITE_ENV: preview
+          NUXT_PUBLIC_SITE_URL: ${{ inputs.cible == 'production' && 'https://brendanfleurdelys.ch' || 'https://preprod.brendanfleurdelys.ch' }}
+          NUXT_SITE_ENV: ${{ inputs.cible == 'production' && 'production' || 'preview' }}
         run: pnpm generate
 
-      # --exclude-glob préserve le marqueur du --delete ; la racine du compte
+      # --exclude-glob préserve les marqueurs du --delete ; la racine du compte
       # de déploiement est le dossier du site, d'où la cible « ./ ».
       - name: Déployer
         env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
           DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
         run: |
-          lftp -u "$DEPLOY_USER,$DEPLOY_PASSWORD" \
-            -e "set ftp:ssl-force yes; set cmd:fail-exit yes; mirror -R --delete --parallel=4 --verbose $DRY_RUN --exclude-glob .preprod-cible .output/public/ ./; quit" \
+          lftp -u "$CIBLE_USER,$CIBLE_PASSWORD" \
+            -e "set ftp:ssl-force yes; set cmd:fail-exit yes; mirror -R --delete --parallel=4 --verbose $DRY_RUN --exclude-glob .preprod-cible --exclude-glob .prod-cible .output/public/ ./; quit" \
             "$FTP_HOST"

@@ -19,9 +19,10 @@ Ne pas les remettre en question sans demande explicite — elles ont été arbit
 - **Encodage découplé de la prérendue Nuxt** : `scripts/build-images.mjs`, idempotent,
   exécuté avant `nuxt generate`.
 - **Publication par script local** (`scripts/ajouter-photo.mjs`), pas de CMS.
-- **Déploiement** : GitHub Actions → `lftp mirror --delete` en FTPS. Deux comptes FTP
-  restreints chacun à leur dossier (site préprod, masters) — Infomaniak ne gère pas les
-  clés SSH, aucun accès SSH en CI. Cache Actions indexé sur
+- **Déploiement** : GitHub Actions → `lftp mirror --delete` en FTPS. Trois comptes FTP
+  restreints chacun à leur dossier (masters, site préprod, docroot prod) — Infomaniak ne
+  gère pas les clés SSH, aucun accès SSH en CI. Préprod automatique au push sur
+  `develop` ; production manuelle uniquement (workflow_dispatch). Cache Actions indexé sur
   `content/photos/**` (les fiches sont dans le dépôt, donc leur hash est connu avant tout
   téléchargement des masters).
 - **URL conservées à l'identique** : `/accueil`, `/galerie`, `/mentions-legales`.

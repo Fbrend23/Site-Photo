@@ -207,9 +207,15 @@ de toute la migration. Le compte FTP restreint le rend impossible sur la product
 `--dry-run` valide le reste (liste des fichiers, cible, exclusion du marqueur).
 
 Secrets : `FTP_HOST`, puis `MASTERS_USER` / `MASTERS_PASSWORD` (compte restreint à
-`masters/`, lecture des photos sources) et `DEPLOY_USER` / `DEPLOY_PASSWORD` (compte
-restreint au dossier du site préprod, publication en FTPS par lftp). Infomaniak ne gère
-pas les clés SSH : tout passe en FTPS, chaque compte cloisonné à son dossier.
+`masters/`, lecture des photos sources), `DEPLOY_USER` / `DEPLOY_PASSWORD` (compte
+restreint au dossier du site préprod) et `PROD_USER` / `PROD_PASSWORD` (compte restreint
+au docroot de production). Infomaniak ne gère pas les clés SSH : tout passe en FTPS,
+chaque compte cloisonné à son dossier.
+
+Deux cibles : la préprod se déploie à chaque push sur `develop` ; la production est
+**manuelle uniquement** (workflow_dispatch, cible « production »), avec son propre
+marqueur `.prod-cible` et un build aux variables de prod (URL canonique, robots
+indexable).
 
 Le `.htaccess` ne sert plus qu'à quatre choses : `DirectoryIndex`, cache long et `immutable`
 sur les assets aux noms hashés, redirection HTTPS, et aucun fichier caché servi (dont le
