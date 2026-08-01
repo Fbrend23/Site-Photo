@@ -18,9 +18,12 @@
 
 name: Déploiement préprod
 
+# Déclenchement manuel uniquement tant que la préprod n'est pas validée —
+# un trigger sur push lancerait un déploiement réel avant le premier dry_run.
+# Une fois le premier déploiement vérifié, réactiver :
+#   push:
+#     branches: [develop]
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       dry_run:
