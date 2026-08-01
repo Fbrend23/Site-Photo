@@ -1,10 +1,25 @@
+# Outillage local
+.claude/worktrees/
+
+# Secrets et dépendances
 .env
 /vendor
 node_modules
 *.log
-*.lock
 admin/auth.php
-*.jpg
-admin/convert-to-webp.php
-*.webp
 /libs/phpmailer
+
+# Nuxt / build
+.nuxt/
+.output/
+.cache/
+.data/
+dist
+app/assets/generated/
+
+# Images — JAMAIS commitées (masters hors dépôt, variantes générées au build)
+masters/
+public/images/galerie/
+*.jpg
+*.webp
+admin/convert-to-webp.php
