@@ -1,0 +1,5 @@
+# Scripts d'installation autorisés (politique pnpm) :
+# sharp et esbuild installent leurs binaires natifs.
+allowBuilds:
+  esbuild: true
+  sharp: true
