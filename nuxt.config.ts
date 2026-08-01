@@ -2,6 +2,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-07-31',
   modules: ['@nuxt/content', '@nuxtjs/seo'],
 
+  css: ['~/assets/css/main.css'],
+
   content: {
     // SQLite natif de Node (>= 22.5) : évite la dépendance native better-sqlite3.
     experimental: { nativeSqlite: true },
