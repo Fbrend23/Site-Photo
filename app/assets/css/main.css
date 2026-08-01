@@ -286,9 +286,9 @@ footer {
 
 .portfolio {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 10px;
-    width: min(1440px, 94%);
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+    width: min(1920px, 97.5%);
     margin: 2.4rem auto 3rem;
 }
 
