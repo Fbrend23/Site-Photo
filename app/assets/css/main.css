@@ -329,12 +329,27 @@ footer {
     background-color: rgba(0, 0, 0, 0.9);
 }
 
+/* L'image vit dans un <picture> (source AVIF + secours WebP) : c'est le flex
+   de .modal qui centre, pas de position fixed — sinon l'image, qui n'est plus
+   enfant direct du flex, partirait du centre de l'écran vers le bas-droite. */
 .modal-content {
-    position: fixed;
+    display: block;
     margin: auto;
     height: auto;
     max-width: 80%;
     max-height: 90vh;
+}
+
+.modal .caption {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
+    color: var(--text);
+    padding: 10px 0px;
 }
 
 .next,
