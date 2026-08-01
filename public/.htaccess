@@ -1,0 +1,15 @@
+# Copié tel quel dans .output/public/ par nuxt generate, puis déployé par rsync.
+# Trois rôles seulement : HTTPS, DirectoryIndex, cache long sur les assets hashés.
+
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+DirectoryIndex index.html
+
+<IfModule mod_headers.c>
+  # Tous les assets aux noms hashés : variantes d'images et bundles Nuxt.
+  <FilesMatch "\.(avif|webp|js|mjs|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
