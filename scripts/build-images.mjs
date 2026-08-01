@@ -27,8 +27,11 @@ import sharp from 'sharp'
 // Profil d'encodage — toute modification ici invalide le cache (voulu).
 // ---------------------------------------------------------------------------
 const PROFILE = {
-  avif: { quality: 55, effort: 3 },
-  webp: { quality: 80 },
+  // quality 55 écrasait les photos à grands aplats flous (Martin-pêcheur à
+  // 10 Ko en 1200 px) — les détails fins du sujet partaient avec. effort 4 :
+  // l'encodage n'est pas un facteur limitant (mesuré 0,11 s/variante).
+  avif: { quality: 68, effort: 4 },
+  webp: { quality: 82 },
   widths: {
     grille: [400, 800, 1200],
     modale: [1600],

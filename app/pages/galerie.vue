@@ -131,7 +131,7 @@ onUnmounted(() => window.removeEventListener('keydown', toucheClavier))
             <source
               type="image/avif"
               :srcset="srcsetGrille(images[photo.master]!, 'avif')"
-              sizes="(max-width: 768px) 40vh, 50vh"
+              sizes="(max-width: 768px) 50vw, 20vw"
             >
             <img
               :src="secoursWebp(images[photo.master]!)"
