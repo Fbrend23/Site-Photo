@@ -110,7 +110,7 @@ jobs:
       #     La préprod reste non indexable (NUXT_SITE_ENV=preview → robots bloquant).
       - name: Générer le site
         env:
-          NUXT_PUBLIC_SITE_URL: ${{ inputs.cible == 'production' && 'https://brendanfleurdelys.ch' || 'https://preprod.brendanfleurdelys.ch' }}
+          NUXT_PUBLIC_SITE_URL: ${{ inputs.cible == 'production' && 'https://photographie.brendanfleurdelys.ch' || 'https://preprod.brendanfleurdelys.ch' }}
           NUXT_SITE_ENV: ${{ inputs.cible == 'production' && 'production' || 'preview' }}
         run: pnpm generate
 

@@ -54,7 +54,7 @@ watch(() => route.path, () => {
 <template>
   <div class="content" :class="{ click: menuOuvert }">
     <header class="site-header">
-      <NuxtLink to="/" aria-label="Accueil"><img class="logo mobile" src="/logo.png" alt="logo"></NuxtLink>
+      <a href="https://brendanfleurdelys.ch" aria-label="Portail brendanfleurdelys.ch"><img class="logo mobile" src="/logo.png" alt="logo"></a>
       <div class="nav-container" :class="{ mobile: menuOuvert }">
         <nav class="navigation" :class="{ mobile: menuOuvert }">
           <ul class="main-list" :class="{ mobile: menuOuvert }">
