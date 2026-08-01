@@ -30,6 +30,17 @@ useHead({
   link: [{ rel: 'icon', type: 'image/png', href: '/logo.png' }],
 })
 
+// Métadonnées sociales : le Martin-pêcheur en vitrine, WebP plutôt qu'AVIF
+// (les crawlers Open Graph ne décodent pas l'AVIF). URL absolue via site.url.
+const vitrine = images['DSC00358.jpg']?.variantes.find(
+  (v) => v.format === 'webp' && v.largeur === 1600,
+)?.fichier
+
+useSeoMeta({
+  ogImage: vitrine,
+  twitterCard: 'summary_large_image',
+})
+
 // Menu hamburger mobile — port de l'ancien index.js en état réactif.
 const menuOuvert = ref(false)
 
