@@ -1,136 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+
+/* Direction : « carnet de terrain nocturne ». La signature manuscrite reste
+   (Dancing Script), tout le reste passe en Spectral — un serif discret qui
+   laisse les photos parler. Traits fins, pas d'effets, espaces généreux. */
 
 :root {
     --black: #0e0e10;
-    --gray: #123244;
-    --darkblue: #146483;
     --blue: #1fa0cc;
-    --white: #eeeeee;
+    --white: #e8e6e1;
 
     --background: var(--black);
-    --headline: #094067;
-    --paragraphe: #5f6c7b;
-    --button: #3da9fc;
-    --highlight: #3da9fc;
     --text: var(--white);
+    --texte-doux: rgba(232, 230, 225, 0.72);
     --accent: var(--blue);
+    --hairline: rgba(232, 230, 225, 0.16);
+
+    --script: "Dancing Script", cursive;
+    --serif: "Spectral", Georgia, serif;
 }
 
 * {
-    color: var(--text);
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Dancing Script", cursive;
+    font-family: inherit;
 }
 
-a {
-    font-size: 20px;
-    text-decoration: none;
-}
-
-.navigation {
-    display: flex;
-}
-
-.navigation a.router-link-exact-active:not(.contact) {
-    text-decoration: underline;
-    color: var(--accent);
-}
-
-.site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-flow: column row;
-    padding: 2px 1.5rem;
-    margin-top: 5px;
-}
-
-.logo {
-    cursor: pointer;
-    width: 50px;
-    margin-right: 10px;
-}
-
-.main-list {
-    list-style: none;
-}
-
-.main-list li {
-    display: inline-block;
-    margin: 0 10px;
-}
-
-.main-list li a {
-    transition: all 0.6s;
-    font-size: 1.5em;
-}
-
-.main-list li a:hover:not(.no-hover) {
-    font-size: 1.8em;
-    color: var(--accent);
-}
-
-li {
-    height: 31px;
-}
-
-button {
-    background-color: transparent;
-    color: var(--text);
-    border: 2px solid var(--accent);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(31, 160, 204, 0.1);
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: var(--accent);
+::selection {
+    background: var(--accent);
     color: #000;
-    box-shadow: 0 4px 12px rgba(31, 160, 204, 0.3);
-    transform: translateY(-2px);
 }
 
-.but1 {
-    background-color: transparent;
-    color: var(--text);
-    border: 2px solid var(--accent);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 1.5rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(31, 160, 204, 0.1);
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
 }
-
-.but1:hover {
-    background-color: var(--accent);
-    color: #000;
-    box-shadow: 0 4px 12px rgba(31, 160, 204, 0.3);
-    transform: translateY(-2px);
-}
-
-.contact {
-    display: inherit;
-    margin: 0px;
-}
-
-/* body */
 
 body {
     background-color: var(--background);
-    width: inherit;
-    transition: opacity 0.5s ease;
+    color: var(--text);
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 1.05rem;
+    line-height: 1.6;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     min-height: 100vh;
 }
 
@@ -143,6 +57,11 @@ body {
 
 main {
     flex: 1;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
 /* Fond d'écran : variante encodée par build-images.mjs, injectée par app.vue
@@ -161,6 +80,52 @@ body::before {
     z-index: -1;
 }
 
+/* ------- En-tête ------- */
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 2rem;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.logo {
+    cursor: pointer;
+    width: 42px;
+    display: block;
+}
+
+.main-list {
+    list-style: none;
+}
+
+.main-list li {
+    display: inline-block;
+    margin: 0 1.1rem;
+}
+
+.main-list li a {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--texte-doux);
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.main-list li a:hover {
+    color: var(--text);
+}
+
+.navigation a.router-link-exact-active:not(.contact) {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+}
+
+/* ------- Accueil ------- */
+
 .main-page {
     display: flex;
     flex-flow: column wrap;
@@ -168,27 +133,46 @@ body::before {
     align-items: center;
     width: 80%;
     margin: 10rem auto;
+    text-align: center;
 }
 
 h2 {
-    border-bottom: rgba(255, 255, 255, 0.6) solid 1px;
-    padding-bottom: 20px;
-    font-size: 4rem;
+    font-family: var(--script);
+    font-weight: 500;
+    font-size: 4.5rem;
+    line-height: 1.15;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid var(--hairline);
     min-width: 40%;
-    text-align: center;
-    transition: all 2s;
 }
 
 h1 {
-    margin: 20px auto 50px;
-    color: rgb(255, 255, 255);
-    font-size: 2rem;
-    transition: all 2s;
-    text-align: center;
+    margin: 1.6rem auto 3.2rem;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+    color: var(--texte-doux);
 }
 
-/* Intro accueil : équivalent CSS pur des setTimeout de l'ancien index.js
-   (apparition à 1 s puis 2 s, fondu de 2 s). */
+.but1 {
+    display: inline-block;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text);
+    padding: 0.75rem 2rem;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.but1:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Intro accueil : apparition à 1 s puis 2 s, fondu de 2 s. */
 .intro1,
 .intro2 {
     opacity: 0;
@@ -209,112 +193,155 @@ h1 {
     }
 }
 
-#hamburger {
-    display: none;
-}
+/* ------- Pied de page ------- */
 
 footer {
     width: 100%;
-    margin: auto auto;
-    padding: 5px;
-    justify-self: end;
+    padding: 1rem;
+    border-top: 1px solid var(--hairline);
 }
 
 .footer-links {
     display: flex;
-    flex-direction: row;
     justify-content: center;
-    align-items: center;
-    height: 10px;
+    align-items: baseline;
+    gap: 1.4rem;
 }
 
 .footer-links * {
-    font-family: Arial;
-    font-size: 8px;
-    color: rgba(255, 255, 255, 0.682);
-    text-align: center;
-    padding: 0;
-    margin: 0 5px;
+    font-size: 0.78rem;
+    color: rgba(232, 230, 225, 0.55);
 }
+
+.footer-links a:hover {
+    color: var(--text);
+}
+
+/* ------- Mentions légales ------- */
 
 .mentions-legales {
-    padding: 2rem;
-    line-height: 1.6;
-}
-
-.mentions-legales * {
-    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    padding: 2.5rem;
+    max-width: 46rem;
+    margin: 0 auto;
+    line-height: 1.7;
 }
 
 .mentions-legales h1 {
-    color: #0077cc;
-    margin-bottom: 1rem;
-    font-size: 2rem;
+    all: unset;
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--hairline);
 }
 
 .mentions-legales h2 {
-    text-align: left;
-    font-size: 1.6rem;
+    all: unset;
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin: 1.6rem 0 0.5rem;
 }
 
 .mentions-legales p {
-    margin-bottom: 1.5rem;
-    text-align: left;
+    margin-bottom: 1.2rem;
+    color: var(--texte-doux);
 }
 
-/*------- Galerie -------*/
+/* ------- Galerie : filtres ------- */
 
-.portfolio {
-    display: flex;
-    flex-flow: wrap row;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0 0 0;
-}
-
-.container-img {
-    transition: all 0.5s ease;
-    opacity: 1;
-    position: relative;
-    margin: 4px 4px;
-}
-
-.container-img picture img {
-    background-color: rgb(0, 0, 0);
-    width: 50svh;
-    height: auto;
-    cursor: pointer;
-}
-
-.container-img.hidden {
-    opacity: 0;
-    height: 0;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    width: 0;
-    display: none;
-}
-
-/* Boutons de sélection de catégorie */
 #category {
     display: flex;
     flex-flow: wrap row;
     justify-content: center;
+    gap: 0.4rem 1.6rem;
     width: 90%;
-    margin: 80px auto 0px;
+    margin: 3.2rem auto 0;
 }
 
 #category > .btn {
-    margin: 5px 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--texte-doux);
+    padding: 0.4rem 0.1rem;
+    border-bottom: 1px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+#category > .btn:hover {
+    color: var(--text);
 }
 
 #category > .btn.selected {
-    background-color: rgba(0, 146, 204, 0.8);
-    font-weight: bold;
+    color: var(--text);
+    border-bottom-color: var(--accent);
 }
 
-/* ------------------- Modale ------------------- */
+/* ------- Galerie : grille ------- */
+
+.portfolio {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+    width: min(1440px, 94%);
+    margin: 2.4rem auto 3rem;
+}
+
+.container-img {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    background-color: #000;
+}
+
+.container-img.hidden {
+    display: none;
+}
+
+.container-img picture,
+.container-img picture img {
+    width: 100%;
+    height: 100%;
+}
+
+.container-img picture img {
+    object-fit: cover;
+    cursor: pointer;
+    display: block;
+    transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.container-img:hover picture img {
+    transform: scale(1.03);
+    filter: brightness(1.07);
+}
+
+.description {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-style: italic;
+    font-size: 1rem;
+    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+    padding: 2rem 0.5rem 0.7rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.container-img:hover .description {
+    opacity: 1;
+}
+
+/* ------- Modale ------- */
+
 .modal {
     display: flex;
     justify-content: center;
@@ -325,86 +352,72 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(8, 8, 12, 0.94);
 }
 
 /* L'image vit dans un <picture> (source AVIF + secours WebP) : c'est le flex
-   de .modal qui centre, pas de position fixed — sinon l'image, qui n'est plus
-   enfant direct du flex, partirait du centre de l'écran vers le bas-droite. */
+   de .modal qui centre, pas de position fixed. */
 .modal-content {
     display: block;
     margin: auto;
     height: auto;
-    max-width: 80%;
-    max-height: 90vh;
+    max-width: 84%;
+    max-height: 88vh;
 }
 
 .modal .caption {
     position: absolute;
-    bottom: 4px;
+    bottom: 14px;
     left: 0;
     width: 100%;
     text-align: center;
-    font-size: 1.5em;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
-    color: var(--text);
-    padding: 10px 0px;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--texte-doux);
 }
 
 .next,
 .previous {
     position: absolute;
     top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
-    font-size: 2.5em;
+    font-size: 1.9em;
     user-select: none;
-    font-weight: bold;
+    color: var(--texte-doux);
+    padding: 0.5rem;
+    transition: color 0.25s ease;
+}
+
+.next:hover,
+.previous:hover {
+    color: var(--text);
 }
 
 .next {
-    right: 5svh;
+    right: 4svh;
 }
 
 .previous {
-    left: 5svh;
+    left: 4svh;
 }
 
 .close {
-    color: #fff;
     position: absolute;
-    top: 10px;
-    right: 40px;
-    font-size: 3em;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-weight: bold;
+    top: 14px;
+    right: 28px;
+    font-size: 2.2em;
+    font-weight: 300;
+    color: var(--texte-doux);
     cursor: pointer;
     user-select: none;
     z-index: 1000;
+    transition: color 0.25s ease;
 }
 
 .close:hover,
 .close:focus {
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.description {
-    position: absolute;
-    bottom: 4px;
-    width: 100%;
-    text-align: center;
-    font-size: 1.5em;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
     color: var(--text);
-    padding: 10px 0px;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-
-.container-img:hover .description {
-    opacity: 1;
 }
 
 .modal img {
@@ -421,11 +434,11 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #555;
+    border: 3px solid rgba(232, 230, 225, 0.2);
+    border-top: 3px solid var(--texte-doux);
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     animation: spin 1s linear infinite;
     z-index: 1001;
 }
@@ -440,30 +453,33 @@ footer {
 }
 
 /* ---------------------- Mobile -------------------------- */
+
+#hamburger {
+    display: none;
+}
+
 @media screen and (max-width: 768px) {
     .bar1,
     .bar2,
     .bar3 {
         margin: 5px 0;
-        height: 4px;
-        width: 25px;
-        background-color: #fff;
+        height: 2px;
+        width: 24px;
+        background-color: var(--text);
         transition: all 0.3s;
     }
 
     #hamburger {
         display: inline;
         position: absolute;
-        height: auto;
-        width: auto;
-        top: 20px;
+        top: 22px;
         right: 25px;
         cursor: pointer;
         z-index: 110;
     }
 
     .bar1.click {
-        transform: translateY(9px) rotate(-45deg);
+        transform: translateY(7px) rotate(-45deg);
     }
 
     .click.bar2 {
@@ -471,70 +487,52 @@ footer {
     }
 
     .click.bar3 {
-        transform: translateY(-9px) rotate(45deg);
-    }
-
-    .content.click {
-        background-color: rgb(9, 9, 9);
+        transform: translateY(-7px) rotate(45deg);
     }
 
     .logo.mobile {
-        margin: 0px;
+        margin: 0;
     }
 
     header > a {
         position: absolute;
-        width: 50px;
-        height: auto;
-        top: 8px;
+        width: 42px;
+        top: 10px;
         left: 15px;
-        cursor: pointer;
         z-index: 110;
-    }
-
-    .main-list {
-        font-size: 2em;
-    }
-
-    li {
-        height: auto;
-    }
-
-    .main-list li a:hover {
-        font-size: 1.2em;
-        color: var(--blue);
     }
 
     .navigation {
         display: none;
     }
 
-    .contact > button {
-        margin: 50px auto;
-        padding: 10px 20px;
-        font-size: 0.5em;
+    h2 {
+        font-size: 3.2rem;
     }
 
-    /* Galerie mobile */
-    .container-img picture img {
-        width: 20svh;
+    h1 {
+        letter-spacing: 0.22em;
+    }
+
+    .portfolio {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 6px;
     }
 
     .next {
-        right: 8svh;
-        top: 70%;
+        right: 6svh;
+        top: 72%;
     }
 
     .previous {
-        left: 8svh;
-        top: 70%;
+        left: 6svh;
+        top: 72%;
     }
 
     .description {
         display: none;
     }
 }
-/* ----- Fin media ------- */
 
 .navigation.mobile {
     display: initial;
@@ -544,10 +542,9 @@ footer {
     position: fixed;
     top: 0;
     left: 0;
-    padding: 0;
     height: 100%;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(8, 8, 12, 0.96);
     z-index: 100;
 }
 
@@ -556,7 +553,11 @@ footer {
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-    gap: 60px;
+    gap: 3.2rem;
     width: 100%;
-    margin-top: 100px;
+    margin-top: 110px;
+}
+
+.main-list.mobile li a {
+    font-size: 1.05rem;
 }
